@@ -3,703 +3,1504 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Scoreboard Voli - Stadion Kucur</title>
 
 <style>
-:root{
-    --bg:#070b12;
-    --panel:#101722;
-    --panel2:#151e2b;
-    --gold:#f5c542;
-    --gold2:#ffdf70;
-    --white:#f7f8fb;
-    --muted:#9ca8b8;
-    --red:#ff4d5a;
-    --green:#35d07f;
-    --blue:#3fa9ff;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    user-select:none;
 }
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--white)}
-body{overflow:hidden}
 
-.app{
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-    background:
-      radial-gradient(circle at 50% -20%,rgba(245,197,66,.15),transparent 38%),
-      linear-gradient(135deg,#05080d,#0b111b 50%,#06090f);
+:root{
+    --gold:#f5c542;
+    --gold2:#ffd966;
+    --dark:#070707;
+    --dark2:#111;
+    --red:#d71920;
+    --white:#fff;
+    --green:#21c55d;
 }
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+        radial-gradient(circle at top,#292929 0,#0b0b0b 45%,#000 100%);
+    color:#fff;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+/* HEADER */
+
+.header{
+    text-align:center;
+    padding:15px 20px 8px;
+}
+
+.brand{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:15px;
+}
+
+.logo{
+    width:72px;
+    height:72px;
+    border:3px solid var(--gold);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+        radial-gradient(circle,#ffffff 0 22%,#d71920 23% 32%,#fff 33% 42%,#d71920 43% 50%,#111 51%);
+    box-shadow:0 0 18px rgba(245,197,66,.5);
+    position:relative;
+}
+
+.logo::after{
+    content:"KT";
+    position:absolute;
+    color:#111;
+    background:#fff;
+    border-radius:50%;
+    padding:4px 5px;
+    font-weight:900;
+    font-size:14px;
+}
+
+.brand-text h1{
+    color:var(--gold);
+    font-size:clamp(20px,3vw,38px);
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.brand-text h2{
+    font-size:clamp(13px,2vw,21px);
+    margin-top:3px;
+    color:#fff;
+}
+
+.location{
+    margin-top:5px;
+    color:#ccc;
+    font-size:14px;
+    letter-spacing:.5px;
+}
+
+/* TOP BAR */
 
 .topbar{
-    min-height:86px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:12px 28px;
-    border-bottom:1px solid rgba(255,255,255,.08);
-    background:rgba(5,8,13,.82);
-    backdrop-filter:blur(10px);
-}
-.brand{display:flex;align-items:center;gap:15px}
-.logo{
-    width:58px;height:58px;border-radius:50%;
-    border:3px solid var(--gold);
-    display:grid;place-items:center;
-    background:linear-gradient(145deg,#1b2534,#070a10);
-    box-shadow:0 0 22px rgba(245,197,66,.22);
-    flex:none;
-}
-.logo svg{width:42px;height:42px}
-.brand h1{margin:0;font-size:22px;letter-spacing:1.5px}
-.brand p{margin:4px 0 0;color:var(--muted);font-size:12px;letter-spacing:1px}
-.top-actions{display:flex;gap:8px;align-items:center}
-
-button{
-    border:0;
-    border-radius:9px;
-    padding:10px 14px;
-    color:#fff;
-    background:#202b3a;
-    cursor:pointer;
-    font-weight:700;
-    transition:.15s;
-}
-button:hover{filter:brightness(1.15);transform:translateY(-1px)}
-button:active{transform:translateY(0) scale(.98)}
-.btn-gold{background:var(--gold);color:#111}
-.btn-red{background:#a92734}
-.btn-green{background:#197d4d}
-.btn-blue{background:#17639a}
-
-.main{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    min-height:0;
-    padding:18px 24px;
-    gap:14px;
-}
-
-.event{
-    text-align:center;
-    flex:none;
-}
-.event .small{
-    color:var(--gold);
-    font-size:12px;
-    font-weight:800;
-    letter-spacing:4px;
-}
-.event h2{
-    margin:4px 0 2px;
-    font-size:clamp(24px,3vw,42px);
-    letter-spacing:3px;
-}
-.event .place{
-    color:var(--muted);
-    font-size:14px;
-    letter-spacing:1px;
-}
-
-.score-area{
-    flex:1;
-    min-height:0;
-    display:grid;
-    grid-template-columns:1fr 180px 1fr;
-    gap:18px;
-    align-items:stretch;
-}
-
-.team{
-    min-width:0;
-    border:1px solid rgba(255,255,255,.09);
-    border-radius:20px;
-    background:linear-gradient(145deg,rgba(25,35,49,.95),rgba(10,15,23,.98));
-    box-shadow:0 15px 45px rgba(0,0,0,.28);
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-}
-.team-head{
-    padding:16px 20px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    background:rgba(255,255,255,.035);
-    border-bottom:1px solid rgba(255,255,255,.07);
-}
-.team-name{
-    font-size:clamp(18px,2.2vw,30px);
-    font-weight:900;
-    letter-spacing:1px;
-    outline:none;
-    border-bottom:2px solid transparent;
-}
-.team-name:focus{border-color:var(--gold)}
-.side-tag{
-    font-size:11px;
-    color:var(--gold);
-    font-weight:900;
-    letter-spacing:2px;
-}
-.score{
-    flex:1;
-    min-height:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:clamp(120px,18vw,250px);
-    font-weight:1000;
-    line-height:.8;
-    letter-spacing:-8px;
-    text-shadow:0 8px 35px rgba(0,0,0,.5);
-}
-.team-a .score{color:#fff}
-.team-b .score{color:var(--gold2)}
-.team-controls{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:8px;
-    padding:14px;
-}
-.point-btn{
-    height:58px;
-    font-size:25px;
-    border-radius:12px;
-}
-.plus{background:#1b8052}
-.minus{background:#303b4a}
-.setwin{background:#8b6a13;color:#fff}
-
-.center{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:12px;
-}
-.set-box{
-    width:100%;
-    padding:15px 10px;
-    border:1px solid rgba(245,197,66,.3);
-    border-radius:16px;
-    background:linear-gradient(145deg,#171e29,#0c1119);
-    text-align:center;
-}
-.set-label{font-size:11px;color:var(--muted);letter-spacing:2px;font-weight:900}
-.set-number{font-size:54px;font-weight:1000;color:var(--gold);margin:2px 0}
-.set-controls{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.set-controls button{padding:9px 5px;font-size:12px}
-
-.serve{
-    width:100%;
-    padding:13px 8px;
-    border-radius:14px;
-    text-align:center;
-    background:#0c121b;
-    border:1px solid rgba(255,255,255,.08);
-}
-.serve-label{font-size:10px;color:var(--muted);letter-spacing:2px}
-.serve-value{font-size:16px;font-weight:900;margin-top:5px;color:var(--green)}
-
-.set-history{
-    flex:none;
-    min-height:74px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:9px;
-    flex-wrap:wrap;
-}
-.set-card{
-    min-width:100px;
-    padding:8px 12px;
-    border-radius:10px;
-    background:#101824;
-    border:1px solid rgba(255,255,255,.08);
-    text-align:center;
-}
-.set-card small{display:block;color:var(--muted);font-size:9px;letter-spacing:1px}
-.set-card b{font-size:18px}
-.winner{border-color:var(--gold);box-shadow:0 0 15px rgba(245,197,66,.15)}
-
-.bottom{
-    flex:none;
-    min-height:46px;
+    width:min(1200px,95%);
+    margin:10px auto;
     display:flex;
     justify-content:space-between;
     align-items:center;
     gap:10px;
-    color:var(--muted);
-    font-size:11px;
-    padding:0 4px;
+    flex-wrap:wrap;
 }
-.clock{font-variant-numeric:tabular-nums}
 
-.modal{
-    position:fixed;inset:0;background:rgba(0,0,0,.72);
-    display:none;align-items:center;justify-content:center;
-    z-index:20;padding:20px;
+.match-info{
+    color:#ddd;
+    font-size:14px;
 }
-.modal.show{display:flex}
-.modal-box{
-    width:min(520px,100%);
-    background:#111923;
-    border:1px solid rgba(245,197,66,.3);
+
+.clock{
+    color:var(--gold);
+    font-weight:bold;
+    font-size:18px;
+}
+
+/* SCOREBOARD */
+
+.scoreboard{
+    width:min(1250px,96%);
+    margin:auto;
+    background:rgba(15,15,15,.96);
+    border:2px solid #333;
+    border-radius:25px;
+    padding:20px;
+    box-shadow:
+        0 0 40px rgba(0,0,0,.7),
+        inset 0 0 20px rgba(255,255,255,.02);
+}
+
+.set-display{
+    text-align:center;
+    margin-bottom:15px;
+}
+
+.set-label{
+    display:inline-block;
+    padding:8px 25px;
+    border-radius:30px;
+    background:#1c1c1c;
+    border:1px solid #444;
+    color:var(--gold);
+    font-size:18px;
+    font-weight:bold;
+}
+
+.teams{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.team{
+    position:relative;
+    border-radius:20px;
+    padding:25px 20px;
+    text-align:center;
+    background:linear-gradient(145deg,#181818,#080808);
+    border:2px solid #333;
+    transition:.25s;
+}
+
+.team.active{
+    border-color:var(--gold);
+    box-shadow:0 0 30px rgba(245,197,66,.18);
+}
+
+.team.winner{
+    border-color:var(--green);
+    box-shadow:0 0 35px rgba(33,197,93,.35);
+}
+
+.team-name{
+    width:90%;
+    margin:auto;
+    font-size:clamp(20px,3vw,40px);
+    font-weight:900;
+    color:#fff;
+    background:transparent;
+    border:0;
+    outline:none;
+    text-align:center;
+}
+
+.team-name:focus{
+    color:var(--gold);
+}
+
+.score{
+    font-size:clamp(100px,18vw,210px);
+    line-height:.9;
+    font-weight:900;
+    margin:25px 0;
+    color:#fff;
+    text-shadow:0 5px 15px #000;
+}
+
+.team:first-child .score{
+    color:#ff4b4b;
+}
+
+.team:nth-child(2) .score{
+    color:#55a7ff;
+}
+
+.score-buttons{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+}
+
+.btn-score{
+    width:70px;
+    height:60px;
+    border:none;
+    border-radius:14px;
+    background:var(--gold);
+    color:#111;
+    font-size:28px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 5px 0 #9c7614;
+    transition:.12s;
+}
+
+.btn-score:hover{
+    background:var(--gold2);
+}
+
+.btn-score:active{
+    transform:translateY(4px);
+    box-shadow:0 1px 0 #9c7614;
+}
+
+.btn-score.minus{
+    background:#333;
+    color:#fff;
+    box-shadow:0 5px 0 #111;
+}
+
+/* SET HISTORY */
+
+.history{
+    margin-top:20px;
+}
+
+.history-title{
+    text-align:center;
+    color:var(--gold);
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.set-results{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.set-box{
+    min-width:110px;
+    padding:10px 15px;
+    text-align:center;
+    background:#171717;
+    border:1px solid #444;
+    border-radius:10px;
+}
+
+.set-box strong{
+    display:block;
+    color:var(--gold);
+    margin-bottom:5px;
+}
+
+/* MATCH RESULT */
+
+.match-result{
+    display:none;
+    margin:20px auto 0;
+    text-align:center;
+    padding:20px;
+    border:2px solid var(--green);
     border-radius:18px;
-    padding:24px;
-    box-shadow:0 30px 80px rgba(0,0,0,.6);
-}
-.modal-box h3{margin:0 0 16px}
-.field{margin-bottom:13px}
-.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px}
-.field input{
-    width:100%;padding:12px;border-radius:9px;border:1px solid #334154;
-    background:#0a1018;color:#fff;font-size:16px;outline:none;
-}
-.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
-
-@media(max-width:900px){
-    body{overflow:auto}
-    .app{min-height:100vh}
-    .topbar{padding:10px 14px}
-    .brand h1{font-size:16px}
-    .brand p{font-size:9px}
-    .top-actions button{font-size:10px;padding:8px}
-    .main{padding:12px}
-    .score-area{grid-template-columns:1fr 100px 1fr;gap:8px}
-    .team{border-radius:14px}
-    .team-head{padding:10px}
-    .team-controls{padding:8px;gap:5px}
-    .point-btn{height:48px;font-size:20px}
-    .score{font-size:clamp(90px,19vw,160px);letter-spacing:-5px}
-    .set-box{padding:10px 5px}
-    .set-number{font-size:38px}
-}
-@media(max-width:650px){
-    body{overflow:auto}
-    .topbar{min-height:64px}
-    .logo{width:42px;height:42px}
-    .logo svg{width:30px;height:30px}
-    .top-actions button:nth-child(1){display:none}
-    .event h2{font-size:22px}
-    .score-area{grid-template-columns:1fr;gap:10px}
-    .center{order:-1;display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .serve{display:none}
-    .set-box{width:auto}
-    .team{min-height:250px}
-    .score{font-size:110px;min-height:130px}
-    .bottom{font-size:9px}
+    background:rgba(33,197,93,.08);
 }
 
-.result-box{max-width:760px;max-height:90vh;overflow:auto}
-.result-sheet{
-    background:#fff;color:#111;border-radius:10px;padding:24px;
-    font-family:Arial,Helvetica,sans-serif;
+.match-result.show{
+    display:block;
 }
-.result-sheet .rs-title{text-align:center;margin:0;font-size:25px;letter-spacing:2px}
-.result-sheet .rs-sub{text-align:center;margin:5px 0;color:#555}
-.result-sheet .rs-place{text-align:center;font-weight:700;margin:12px 0 20px}
-.result-score{
-    display:grid;grid-template-columns:1fr auto 1fr;gap:15px;
-    align-items:center;text-align:center;margin:15px 0 22px
+
+.match-result h2{
+    color:var(--green);
+    font-size:32px;
 }
-.result-team{font-size:18px;font-weight:800}
-.result-big{font-size:48px;font-weight:1000}
-.result-vs{font-size:13px;color:#666}
-.result-table{width:100%;border-collapse:collapse;margin-top:12px}
-.result-table th,.result-table td{border:1px solid #bbb;padding:9px;text-align:center}
-.result-table th{background:#eee}
-.rs-footer{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:50px;text-align:center}
-.rs-sign{height:70px}
-@media print{
-    body *{visibility:hidden!important}
-    #printArea,#printArea *{visibility:visible!important}
-    #printArea{
-        position:absolute;left:0;top:0;width:100%;
+
+.match-result p{
+    margin-top:8px;
+    font-size:20px;
+}
+
+/* CONTROLS */
+
+.controls{
+    width:min(1100px,95%);
+    margin:20px auto;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.control-btn{
+    padding:13px 22px;
+    border-radius:10px;
+    border:1px solid #555;
+    background:#191919;
+    color:#fff;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.control-btn:hover{
+    border-color:var(--gold);
+    color:var(--gold);
+}
+
+.control-btn.gold{
+    background:var(--gold);
+    color:#111;
+    border-color:var(--gold);
+}
+
+.control-btn.red{
+    background:#8e1519;
+    border-color:#d71920;
+}
+
+/* FOOTER */
+
+.footer{
+    text-align:center;
+    padding:15px;
+    color:#888;
+    font-size:12px;
+}
+
+/* WINNER OVERLAY */
+
+.overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.88);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:999;
+}
+
+.overlay.show{
+    display:flex;
+}
+
+.win-card{
+    width:min(600px,90%);
+    text-align:center;
+    padding:45px 25px;
+    border:3px solid var(--gold);
+    border-radius:25px;
+    background:linear-gradient(145deg,#191919,#050505);
+    box-shadow:0 0 70px rgba(245,197,66,.35);
+    animation:pop .4s ease;
+}
+
+.win-card .trophy{
+    font-size:80px;
+}
+
+.win-card h1{
+    color:var(--gold);
+    font-size:clamp(30px,6vw,60px);
+    margin:10px 0;
+}
+
+.win-card p{
+    color:#ddd;
+    font-size:22px;
+}
+
+@keyframes pop{
+    from{
+        transform:scale(.5);
+        opacity:0;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
     }
 }
 
+/* CONFETTI */
+
+.confetti{
+    position:fixed;
+    width:9px;
+    height:14px;
+    top:-20px;
+    z-index:1000;
+    animation:fall linear forwards;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(110vh) rotate(720deg);
+    }
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+    .scoreboard{
+        padding:10px;
+        border-radius:15px;
+    }
+
+    .teams{
+        gap:8px;
+    }
+
+    .team{
+        padding:15px 5px;
+        border-radius:15px;
+    }
+
+    .score{
+        font-size:clamp(75px,22vw,130px);
+        margin:20px 0;
+    }
+
+    .btn-score{
+        width:55px;
+        height:50px;
+        font-size:23px;
+    }
+
+    .team-name{
+        width:100%;
+        font-size:18px;
+    }
+
+    .brand{
+        gap:8px;
+    }
+
+    .logo{
+        width:55px;
+        height:55px;
+    }
+}
+
+/* PRINT */
+
+@media print{
+
+    body{
+        background:#fff;
+        color:#000;
+    }
+
+    .controls,
+    .footer,
+    .overlay,
+    .topbar{
+        display:none!important;
+    }
+
+    .scoreboard{
+        box-shadow:none;
+        border:2px solid #000;
+        color:#000;
+    }
+
+    .team{
+        border:2px solid #000;
+        color:#000;
+    }
+
+    .score{
+        color:#000!important;
+        text-shadow:none;
+    }
+}
 </style>
 </head>
 
 <body>
-<div class="app">
 
-<header class="topbar">
+<header class="header">
+
     <div class="brand">
-        <div class="logo" title="Logo Karang Taruna">
-            <!-- Logo sederhana Karang Taruna -->
-            <svg viewBox="0 0 100 100" aria-hidden="true">
-                <circle cx="50" cy="50" r="43" fill="none" stroke="#f5c542" stroke-width="4"/>
-                <path d="M25 65 L35 38 L50 55 L65 28 L76 65" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="35" cy="30" r="7" fill="#f5c542"/>
-                <circle cx="65" cy="21" r="7" fill="#f5c542"/>
-                <path d="M24 75 Q50 84 76 75" fill="none" stroke="#f5c542" stroke-width="4"/>
-            </svg>
+
+        <div class="logo"></div>
+
+        <div class="brand-text">
+            <h1>KARANG TARUNA "BHAKTI REMAJA"</h1>
+            <h2>STADION KUCUR</h2>
+            <div class="location">
+                Jaten RW 005 • Miricinde • Purwantoro
+            </div>
         </div>
-        <div>
-            <h1>KARANG TARUNA BAKTI REMAJA</h1>
-            <p>JATEN RW 005 • MIRICINDE • PURWANTORO</p>
-        </div>
+
     </div>
-    <div class="top-actions">
-        <button class="btn-blue" onclick="openResult()">📄 Hasil</button>
-        <button class="btn-blue" onclick="openSettings()">⚙ Pengaturan</button>
-        <button class="btn-gold" onclick="toggleFullscreen()">⛶ FULLSCREEN</button>
-    </div>
+
 </header>
 
-<main class="main">
-    <section class="event">
-        <div class="small">VOLLEYBALL SCOREBOARD</div>
-        <h2>STADION KUCUR</h2>
-        <div class="place">Jaten RW 005 – Miricinde – Purwantoro</div>
-    </section>
+<div class="topbar">
 
-    <section class="score-area">
-        <div class="team team-a">
-            <div class="team-head">
-                <div id="nameA" class="team-name" contenteditable="true" spellcheck="false">TIM A</div>
-                <div class="side-tag">HOME</div>
+    <div class="match-info">
+        🏐 PERTANDINGAN BOLA VOLI
+    </div>
+
+    <div class="clock" id="clock">
+        00:00:00
+    </div>
+
+</div>
+
+<main class="scoreboard">
+
+    <div class="set-display">
+        <span class="set-label" id="setLabel">
+            SET 1
+        </span>
+    </div>
+
+    <section class="teams">
+
+        <!-- TEAM A -->
+
+        <div class="team active" id="teamA">
+
+            <input
+                id="nameA"
+                class="team-name"
+                value="TIM A"
+                maxlength="20"
+            >
+
+            <div
+                class="score"
+                id="scoreA"
+            >
+                0
             </div>
-            <div id="scoreA" class="score">0</div>
-            <div class="team-controls">
-                <button class="point-btn minus" onclick="changeScore('A',-1)">−</button>
-                <button class="point-btn plus" onclick="changeScore('A',1)">+</button>
-                <button class="setwin" onclick="winSet('A')">MENANG SET</button>
+
+            <div class="score-buttons">
+
+                <button
+                    class="btn-score"
+                    onclick="addPoint('A')"
+                >
+                    +
+                </button>
+
+                <button
+                    class="btn-score minus"
+                    onclick="minusPoint('A')"
+                >
+                    −
+                </button>
+
             </div>
+
         </div>
 
-        <div class="center">
+
+        <!-- TEAM B -->
+
+        <div class="team" id="teamB">
+
+            <input
+                id="nameB"
+                class="team-name"
+                value="TIM B"
+                maxlength="20"
+            >
+
+            <div
+                class="score"
+                id="scoreB"
+            >
+                0
+            </div>
+
+            <div class="score-buttons">
+
+                <button
+                    class="btn-score"
+                    onclick="addPoint('B')"
+                >
+                    +
+                </button>
+
+                <button
+                    class="btn-score minus"
+                    onclick="minusPoint('B')"
+                >
+                    −
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- HISTORY -->
+
+    <section class="history">
+
+        <div class="history-title">
+            HASIL SET
+        </div>
+
+        <div
+            class="set-results"
+            id="setResults"
+        >
             <div class="set-box">
-                <div class="set-label">SET AKTIF</div>
-                <div id="setNumber" class="set-number">1</div>
-                <div class="set-controls">
-                    <button onclick="changeSet(-1)">− SET</button>
-                    <button onclick="changeSet(1)">+ SET</button>
-                </div>
+                <strong>SET 1</strong>
+                -
             </div>
 
-            <div class="serve">
-                <div class="serve-label">SERVE</div>
-                <div id="serveValue" class="serve-value">TIM A</div>
-                <button style="margin-top:8px;width:100%;padding:7px" onclick="toggleServe()">GANTI SERVE</button>
+            <div class="set-box">
+                <strong>SET 2</strong>
+                -
+            </div>
+
+            <div class="set-box">
+                <strong>SET 3</strong>
+                -
+            </div>
+
+            <div class="set-box">
+                <strong>SET 4</strong>
+                -
+            </div>
+
+            <div class="set-box">
+                <strong>SET 5</strong>
+                -
             </div>
         </div>
 
-        <div class="team team-b">
-            <div class="team-head">
-                <div id="nameB" class="team-name" contenteditable="true" spellcheck="false">TIM B</div>
-                <div class="side-tag">AWAY</div>
-            </div>
-            <div id="scoreB" class="score">0</div>
-            <div class="team-controls">
-                <button class="point-btn minus" onclick="changeScore('B',-1)">−</button>
-                <button class="point-btn plus" onclick="changeScore('B',1)">+</button>
-                <button class="setwin" onclick="winSet('B')">MENANG SET</button>
-            </div>
-        </div>
     </section>
 
-    <section id="history" class="set-history"></section>
 
-    <footer class="bottom">
-        <div>🏐 STADION KUCUR • SCOREBOARD DIGITAL</div>
-        <div class="clock" id="clock">00:00:00</div>
-    </footer>
+    <!-- MATCH RESULT -->
+
+    <section
+        class="match-result"
+        id="matchResult"
+    >
+        <h2>🏆 PEMENANG PERTANDINGAN</h2>
+
+        <p id="winnerText">
+            -
+        </p>
+    </section>
+
 </main>
+
+
+<!-- CONTROL -->
+
+<div class="controls">
+
+    <button
+        class="control-btn gold"
+        onclick="undo()"
+    >
+        ↩ UNDO
+    </button>
+
+    <button
+        class="control-btn"
+        onclick="resetSet()"
+    >
+        🔄 RESET SET
+    </button>
+
+    <button
+        class="control-btn"
+        onclick="nextSetManual()"
+    >
+        ➡ SET BERIKUTNYA
+    </button>
+
+    <button
+        class="control-btn"
+        onclick="toggleFullscreen()"
+    >
+        ⛶ FULLSCREEN
+    </button>
+
+    <button
+        class="control-btn"
+        onclick="window.print()"
+    >
+        🖨 CETAK
+    </button>
+
+    <button
+        class="control-btn red"
+        onclick="newMatch()"
+    >
+        🗑 PERTANDINGAN BARU
+    </button>
+
 </div>
 
 
-<div class="modal" id="resultModal">
-    <div class="modal-box result-box">
-        <h3>📄 Hasil Pertandingan</h3>
-        <div id="resultPreview"></div>
-        <div class="modal-actions">
-            <button onclick="closeResult()">Tutup</button>
-            <button class="btn-blue" onclick="downloadResultCSV()">⬇ CSV</button>
-            <button class="btn-green" onclick="downloadResultHTML()">💾 File Hasil</button>
-            <button class="btn-gold" onclick="printResult()">🖨 Cetak / PDF</button>
+<footer class="footer">
+
+    KARANG TARUNA INDONESIA • STADION KUCUR • JATEN RW 005 MIRICINDE PURWANTORO
+
+</footer>
+
+
+<!-- WINNER OVERLAY -->
+
+<div
+    class="overlay"
+    id="winnerOverlay"
+>
+
+    <div class="win-card">
+
+        <div class="trophy">
+            🏆
         </div>
+
+        <h1 id="overlayWinner">
+            PEMENANG
+        </h1>
+
+        <p>
+            Selamat atas kemenangan!
+        </p>
+
+        <br>
+
+        <button
+            class="control-btn gold"
+            onclick="closeOverlay()"
+        >
+            TUTUP
+        </button>
+
     </div>
+
 </div>
 
-<div class="modal" id="settingsModal">
-    <div class="modal-box">
-        <h3>⚙ Pengaturan Pertandingan</h3>
-
-        <div class="field">
-            <label>NAMA TIM A</label>
-            <input id="inputA" value="TIM A">
-        </div>
-
-        <div class="field">
-            <label>NAMA TIM B</label>
-            <input id="inputB" value="TIM B">
-        </div>
-
-        <div class="field">
-            <label>SET AKTIF</label>
-            <input id="inputSet" type="number" min="1" max="5" value="1">
-        </div>
-
-        <div class="modal-actions">
-            <button onclick="closeSettings()">Batal</button>
-            <button class="btn-red" onclick="resetMatch()">Reset Pertandingan</button>
-            <button class="btn-gold" onclick="saveSettings()">Simpan</button>
-        </div>
-    </div>
-</div>
 
 <script>
+
+/* =========================================================
+   DATA PERTANDINGAN
+========================================================= */
+
+let currentSet = 1;
+
 let scoreA = 0;
 let scoreB = 0;
-let activeSet = 1;
-let serve = 'A';
+
+let setsWonA = 0;
+let setsWonB = 0;
+
+let matchFinished = false;
+
+let setFinished = false;
+
 let history = [];
 
-const $ = id => document.getElementById(id);
+let setResults = [];
 
-function render(){
-    $('scoreA').textContent = scoreA;
-    $('scoreB').textContent = scoreB;
-    $('setNumber').textContent = activeSet;
-    $('serveValue').textContent = serve === 'A' ? $('nameA').textContent.trim() : $('nameB').textContent.trim();
+const MAX_NORMAL_SET = 25;
+const MAX_FINAL_SET = 15;
+const MAX_MATCH_SETS = 3;
 
-    $('history').innerHTML = history.length
-        ? history.map((x,i)=>`
-            <div class="set-card ${x.winner?'winner':''}">
-                <small>SET ${i+1}</small>
-                <b>${x.a} — ${x.b}</b>
-                ${x.winner ? `<small>${escapeHtml(x.winner)} MENANG</small>` : ''}
-            </div>`).join('')
-        : '<div style="color:#657285;font-size:11px">Belum ada hasil set</div>';
-}
 
-function escapeHtml(str){
-    return str.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-}
+/* =========================================================
+   ELEMENT
+========================================================= */
 
-function changeScore(team, value){
-    if(team === 'A'){
-        scoreA = Math.max(0, scoreA + value);
-    }else{
-        scoreB = Math.max(0, scoreB + value);
-    }
-    if(value > 0) serve = team;
-    render();
-}
+const scoreAEl = document.getElementById("scoreA");
+const scoreBEl = document.getElementById("scoreB");
 
-function winSet(team){
+const setLabel = document.getElementById("setLabel");
+
+const teamAEl = document.getElementById("teamA");
+const teamBEl = document.getElementById("teamB");
+
+const setResultsEl = document.getElementById("setResults");
+
+const matchResultEl = document.getElementById("matchResult");
+
+const winnerTextEl = document.getElementById("winnerText");
+
+const overlay = document.getElementById("winnerOverlay");
+
+const overlayWinner = document.getElementById("overlayWinner");
+
+
+/* =========================================================
+   SIMPAN HISTORY
+========================================================= */
+
+function saveHistory(){
+
     history.push({
-        a:scoreA,
-        b:scoreB,
-        winner: team === 'A' ? $('nameA').textContent.trim() : $('nameB').textContent.trim()
+        scoreA:scoreA,
+        scoreB:scoreB,
+        currentSet:currentSet,
+        setsWonA:setsWonA,
+        setsWonB:setsWonB,
+        setFinished:setFinished,
+        matchFinished:matchFinished,
+        setResults:JSON.parse(JSON.stringify(setResults))
     });
 
-    if(activeSet < 5){
-        activeSet++;
-        scoreA = 0;
-        scoreB = 0;
-        serve = team;
-    }else{
-        alert('Pertandingan sudah mencapai SET 5. Gunakan Reset Pertandingan untuk pertandingan baru.');
-    }
-    render();
 }
 
-function changeSet(v){
-    activeSet = Math.min(5, Math.max(1, activeSet + v));
-    render();
+
+/* =========================================================
+   UPDATE TAMPILAN
+========================================================= */
+
+function updateDisplay(){
+
+    scoreAEl.textContent = scoreA;
+    scoreBEl.textContent = scoreB;
+
+    setLabel.textContent = "SET " + currentSet;
+
+    teamAEl.classList.toggle(
+        "active",
+        scoreA >= scoreB
+    );
+
+    teamBEl.classList.toggle(
+        "active",
+        scoreB > scoreA
+    );
+
+    renderSetResults();
+
 }
 
-function toggleServe(){
-    serve = serve === 'A' ? 'B' : 'A';
-    render();
+
+/* =========================================================
+   BATAS SKOR
+========================================================= */
+
+function getTargetScore(){
+
+    return currentSet === 5
+        ? MAX_FINAL_SET
+        : MAX_NORMAL_SET;
+
 }
 
-function openSettings(){
-    $('inputA').value = $('nameA').textContent.trim();
-    $('inputB').value = $('nameB').textContent.trim();
-    $('inputSet').value = activeSet;
-    $('settingsModal').classList.add('show');
-}
-function closeSettings(){
-    $('settingsModal').classList.remove('show');
-}
-function saveSettings(){
-    $('nameA').textContent = $('inputA').value.trim() || 'TIM A';
-    $('nameB').textContent = $('inputB').value.trim() || 'TIM B';
-    activeSet = Math.min(5, Math.max(1, parseInt($('inputSet').value) || 1));
-    closeSettings();
-    render();
-}
 
-function resetMatch(){
-    if(!confirm('Reset seluruh pertandingan dan hasil set?')) return;
-    scoreA = 0;
-    scoreB = 0;
-    activeSet = 1;
-    serve = 'A';
-    history = [];
-    closeSettings();
-    render();
-}
+/* =========================================================
+   CEK PEMENANG SET
+========================================================= */
 
-function toggleFullscreen(){
-    if(!document.fullscreenElement){
-        document.documentElement.requestFullscreen().catch(()=>{});
-    }else{
-        document.exitFullscreen().catch(()=>{});
-    }
-}
+function checkSetWinner(){
 
-$('nameA').addEventListener('input', render);
-$('nameB').addEventListener('input', render);
-
-document.addEventListener('keydown', e=>{
-    if(e.key === 'Escape' && $('settingsModal').classList.contains('show')){
-        closeSettings();
+    if(setFinished || matchFinished){
         return;
     }
-    if(e.key === 'ArrowLeft') changeScore('A',1);
-    if(e.key === 'ArrowRight') changeScore('B',1);
-    if(e.key.toLowerCase() === 'a') changeScore('A',-1);
-    if(e.key.toLowerCase() === 'b') changeScore('B',-1);
-    if(e.key === 'f' || e.key === 'F') toggleFullscreen();
-});
+
+    const target = getTargetScore();
+
+    /* TIM A MENANG */
+
+    if(
+        scoreA >= target &&
+        scoreA - scoreB >= 2
+    ){
+
+        finishSet("A");
+        return;
+
+    }
+
+
+    /* TIM B MENANG */
+
+    if(
+        scoreB >= target &&
+        scoreB - scoreA >= 2
+    ){
+
+        finishSet("B");
+        return;
+
+    }
+
+}
+
+
+/* =========================================================
+   TAMBAH POIN
+========================================================= */
+
+function addPoint(team){
+
+    if(setFinished || matchFinished){
+        return;
+    }
+
+    saveHistory();
+
+    if(team === "A"){
+        scoreA++;
+    }else{
+        scoreB++;
+    }
+
+    updateDisplay();
+
+    checkSetWinner();
+
+}
+
+
+/* =========================================================
+   KURANGI POIN
+========================================================= */
+
+function minusPoint(team){
+
+    if(setFinished || matchFinished){
+        return;
+    }
+
+    if(team === "A" && scoreA <= 0){
+        return;
+    }
+
+    if(team === "B" && scoreB <= 0){
+        return;
+    }
+
+    saveHistory();
+
+    if(team === "A"){
+        scoreA--;
+    }else{
+        scoreB--;
+    }
+
+    updateDisplay();
+
+}
+
+
+/* =========================================================
+   SELESAI SET
+========================================================= */
+
+function finishSet(winner){
+
+    setFinished = true;
+
+    const winnerName =
+        winner === "A"
+        ? document.getElementById("nameA").value
+        : document.getElementById("nameB").value;
+
+    if(winner === "A"){
+
+        setsWonA++;
+
+        teamAEl.classList.add("winner");
+
+    }else{
+
+        setsWonB++;
+
+        teamBEl.classList.add("winner");
+
+    }
+
+
+    setResults.push({
+        set:currentSet,
+        scoreA:scoreA,
+        scoreB:scoreB,
+        winner:winnerName
+    });
+
+
+    renderSetResults();
+
+
+    /* CEK APAKAH MATCH SELESAI */
+
+    if(
+        setsWonA >= MAX_MATCH_SETS ||
+        setsWonB >= MAX_MATCH_SETS
+    ){
+
+        finishMatch(winner);
+
+        return;
+
+    }
+
+
+    showSetWinner(winnerName);
+
+
+    /* OTOMATIS PINDAH SET */
+
+    setTimeout(() => {
+
+        nextSet();
+
+    },1800);
+
+}
+
+
+/* =========================================================
+   SET BERIKUTNYA
+========================================================= */
+
+function nextSet(){
+
+    if(matchFinished){
+        return;
+    }
+
+    currentSet++;
+
+    if(currentSet > 5){
+        currentSet = 5;
+    }
+
+    scoreA = 0;
+    scoreB = 0;
+
+    setFinished = false;
+
+    teamAEl.classList.remove("winner");
+    teamBEl.classList.remove("winner");
+
+    updateDisplay();
+
+}
+
+
+/* =========================================================
+   SET BERIKUTNYA MANUAL
+========================================================= */
+
+function nextSetManual(){
+
+    if(matchFinished){
+        return;
+    }
+
+    if(!setFinished){
+
+        const lanjut = confirm(
+            "Set belum selesai. Yakin lanjut ke set berikutnya?"
+        );
+
+        if(!lanjut){
+            return;
+        }
+
+    }
+
+    nextSet();
+
+}
+
+
+/* =========================================================
+   RESET SET
+========================================================= */
+
+function resetSet(){
+
+    if(matchFinished){
+        return;
+    }
+
+    const yakin = confirm(
+        "Reset skor pada set ini?"
+    );
+
+    if(!yakin){
+        return;
+    }
+
+    scoreA = 0;
+    scoreB = 0;
+
+    setFinished = false;
+
+    teamAEl.classList.remove("winner");
+    teamBEl.classList.remove("winner");
+
+    updateDisplay();
+
+}
+
+
+/* =========================================================
+   UNDO
+========================================================= */
+
+function undo(){
+
+    if(history.length === 0){
+        alert("Belum ada aksi yang dapat dibatalkan.");
+        return;
+    }
+
+    const last =
+        history.pop();
+
+    scoreA = last.scoreA;
+    scoreB = last.scoreB;
+
+    currentSet = last.currentSet;
+
+    setsWonA = last.setsWonA;
+    setsWonB = last.setsWonB;
+
+    setFinished = last.setFinished;
+
+    matchFinished = last.matchFinished;
+
+    setResults =
+        JSON.parse(
+            JSON.stringify(last.setResults)
+        );
+
+    teamAEl.classList.remove("winner");
+    teamBEl.classList.remove("winner");
+
+    matchResultEl.classList.remove("show");
+
+    updateDisplay();
+
+}
+
+
+/* =========================================================
+   HASIL SET
+========================================================= */
+
+function renderSetResults(){
+
+    let html = "";
+
+    for(let i=1;i<=5;i++){
+
+        const result =
+            setResults.find(
+                x => x.set === i
+            );
+
+        if(result){
+
+            html += `
+                <div class="set-box">
+                    <strong>SET ${i}</strong>
+                    ${result.scoreA} - ${result.scoreB}
+                </div>
+            `;
+
+        }else{
+
+            html += `
+                <div class="set-box">
+                    <strong>SET ${i}</strong>
+                    -
+                </div>
+            `;
+
+        }
+
+    }
+
+    setResultsEl.innerHTML = html;
+
+}
+
+
+/* =========================================================
+   SELESAI PERTANDINGAN
+========================================================= */
+
+function finishMatch(winner){
+
+    matchFinished = true;
+    setFinished = true;
+
+    const name =
+        winner === "A"
+        ? document.getElementById("nameA").value
+        : document.getElementById("nameB").value;
+
+    teamAEl.classList.remove("winner");
+    teamBEl.classList.remove("winner");
+
+    if(winner === "A"){
+        teamAEl.classList.add("winner");
+    }else{
+        teamBEl.classList.add("winner");
+    }
+
+    winnerTextEl.innerHTML =
+        `<strong>${escapeHTML(name)}</strong><br>
+         Menang ${winner === "A" ? setsWonA : setsWonB}
+         - ${winner === "A" ? setsWonB : setsWonA}`;
+
+    matchResultEl.classList.add("show");
+
+    overlayWinner.textContent =
+        name;
+
+    overlay.classList.add("show");
+
+    createConfetti();
+
+}
+
+
+/* =========================================================
+   TAMPIL PEMENANG SET
+========================================================= */
+
+function showSetWinner(name){
+
+    overlayWinner.textContent =
+        name;
+
+    overlay.classList.add("show");
+
+    setTimeout(() => {
+
+        if(!matchFinished){
+            closeOverlay();
+        }
+
+    },1500);
+
+}
+
+
+/* =========================================================
+   TUTUP OVERLAY
+========================================================= */
+
+function closeOverlay(){
+
+    overlay.classList.remove("show");
+
+}
+
+
+/* =========================================================
+   PERTANDINGAN BARU
+========================================================= */
+
+function newMatch(){
+
+    const yakin = confirm(
+        "Mulai pertandingan baru?\n\nSemua skor akan dihapus."
+    );
+
+    if(!yakin){
+        return;
+    }
+
+    currentSet = 1;
+
+    scoreA = 0;
+    scoreB = 0;
+
+    setsWonA = 0;
+    setsWonB = 0;
+
+    matchFinished = false;
+    setFinished = false;
+
+    history = [];
+    setResults = [];
+
+    teamAEl.classList.remove("winner");
+    teamBEl.classList.remove("winner");
+
+    matchResultEl.classList.remove("show");
+
+    overlay.classList.remove("show");
+
+    updateDisplay();
+
+}
+
+
+/* =========================================================
+   FULLSCREEN
+========================================================= */
+
+function toggleFullscreen(){
+
+    if(!document.fullscreenElement){
+
+        document.documentElement.requestFullscreen()
+        .catch(() => {});
+
+    }else{
+
+        document.exitFullscreen();
+
+    }
+
+}
+
+
+/* =========================================================
+   JAM
+========================================================= */
 
 function updateClock(){
-    const d = new Date();
-    $('clock').textContent = d.toLocaleTimeString('id-ID',{hour12:false});
+
+    const now =
+        new Date();
+
+    const time =
+        now.toLocaleTimeString(
+            "id-ID",
+            {
+                hour:"2-digit",
+                minute:"2-digit",
+                second:"2-digit"
+            }
+        );
+
+    document.getElementById("clock")
+        .textContent = time;
+
 }
-setInterval(updateClock,1000);
+
+setInterval(
+    updateClock,
+    1000
+);
+
 updateClock();
-render();
 
-function openResult(){
-    const winner = scoreA === scoreB ? 'SERI' : (scoreA > scoreB ? $('nameA').textContent.trim() : $('nameB').textContent.trim());
-    let rows = '';
-    if(history.length){
-        rows = history.map((x,i)=>`
-            <tr>
-                <td>SET ${i+1}</td>
-                <td>${escapeHtml(x.a)}</td>
-                <td>${escapeHtml(x.b)}</td>
-                <td>${escapeHtml(x.winner || '-')}</td>
-            </tr>`).join('');
-    }else{
-        rows = `<tr><td>Set berjalan</td><td>${scoreA}</td><td>${scoreB}</td><td>-</td></tr>`;
+
+/* =========================================================
+   CONFETTI
+========================================================= */
+
+function createConfetti(){
+
+    const symbols =
+        ["★","◆","●","✦","♦"];
+
+    for(let i=0;i<90;i++){
+
+        const el =
+            document.createElement("div");
+
+        el.className =
+            "confetti";
+
+        el.textContent =
+            symbols[
+                Math.floor(
+                    Math.random() *
+                    symbols.length
+                )
+            ];
+
+        el.style.left =
+            Math.random() * 100 + "vw";
+
+        el.style.fontSize =
+            (8 + Math.random()*12) + "px";
+
+        el.style.animationDuration =
+            (2 + Math.random()*3) + "s";
+
+        el.style.animationDelay =
+            Math.random() + "s";
+
+        document.body.appendChild(el);
+
+        setTimeout(
+            () => el.remove(),
+            6000
+        );
+
     }
 
-    const totalA = history.reduce((n,x)=>n+(x.winner === $('nameA').textContent.trim()?1:0),0);
-    const totalB = history.reduce((n,x)=>n+(x.winner === $('nameB').textContent.trim()?1:0),0);
-
-    $('resultPreview').innerHTML = `
-      <div id="printArea" class="result-sheet">
-        <div class="rs-title">KARANG TARUNA BAKTI REMAJA</div>
-        <div class="rs-sub">STADION KUCUR</div>
-        <div class="rs-place">Jaten RW 005 • Miricinde • Purwantoro</div>
-
-        <div class="result-score">
-          <div>
-            <div class="result-team">${escapeHtml($('nameA').textContent.trim())}</div>
-            <div class="result-big">${scoreA}</div>
-            <div>Set Menang: ${totalA}</div>
-          </div>
-          <div class="result-vs">VS</div>
-          <div>
-            <div class="result-team">${escapeHtml($('nameB').textContent.trim())}</div>
-            <div class="result-big">${scoreB}</div>
-            <div>Set Menang: ${totalB}</div>
-          </div>
-        </div>
-
-        <table class="result-table">
-          <thead><tr><th>Set</th><th>${escapeHtml($('nameA').textContent.trim())}</th><th>${escapeHtml($('nameB').textContent.trim())}</th><th>Pemenang</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-
-        <p style="text-align:center;margin-top:18px"><b>Status:</b> ${escapeHtml(winner)}</p>
-
-        <div class="rs-footer">
-          <div>Wasit / Petugas<br><div class="rs-sign"></div>(________________)</div>
-          <div>Panitia<br><div class="rs-sign"></div>(________________)</div>
-        </div>
-        <div style="text-align:center;margin-top:18px;font-size:10px;color:#777">
-          Dicetak dari Scoreboard Digital Stadion Kucur
-        </div>
-      </div>`;
-    $('resultModal').classList.add('show');
 }
 
-function closeResult(){ $('resultModal').classList.remove('show'); }
 
-function printResult(){
-    openResult();
-    setTimeout(()=>window.print(),150);
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(text){
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        text;
+
+    return div.innerHTML;
+
 }
 
-function getResultData(){
-    return {
-        tempat:"STADION KUCUR",
-        penyelenggara:"KARANG TARUNA BAKTI REMAJA",
-        lokasi:"Jaten RW 005 - Miricinde - Purwantoro",
-        timA:$('nameA').textContent.trim(),
-        timB:$('nameB').textContent.trim(),
-        skorA:scoreA,
-        skorB:scoreB,
-        setAktif:activeSet,
-        hasilSet:history,
-        waktu:new Date().toLocaleString('id-ID')
-    };
-}
 
-function downloadResultCSV(){
-    const d=getResultData();
-    let csv="STADION KUCUR\\nKARANG TARUNA BAKTI REMAJA\\nJaten RW 005 - Miricinde - Purwantoro\\n\\n";
-    csv+="TIM A,TIM B,SKOR A,SKOR B,STATUS\\n";
-    csv+=`"${d.timA.replace(/"/g,'""')}","${d.timB.replace(/"/g,'""')}",${d.skorA},${d.skorB},"${d.skorA===d.skorB?'SERI':(d.skorA>d.skorB?d.timA:d.timB)}"\\n\\n`;
-    csv+="SET,SKOR TIM A,SKOR TIM B,PEMENANG\\n";
-    if(d.hasilSet.length){
-        d.hasilSet.forEach((x,i)=>{
-            csv+=`"${i+1}",${x.a},${x.b},"${(x.winner||'').replace(/"/g,'""')}"\\n`;
-        });
-    }else{
-        csv+=`"Set berjalan",${d.skorA},${d.skorB},"-"\\n`;
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+/*
+    Keyboard:
+    A = tambah Tim A
+    Z = kurangi Tim A
+    B = tambah Tim B
+    M = kurangi Tim B
+    U = Undo
+    F = Fullscreen
+*/
+
+document.addEventListener(
+    "keydown",
+    function(e){
+
+        if(
+            e.target.tagName === "INPUT"
+        ){
+            return;
+        }
+
+        const key =
+            e.key.toLowerCase();
+
+        if(key === "a"){
+            addPoint("A");
+        }
+
+        if(key === "z"){
+            minusPoint("A");
+        }
+
+        if(key === "b"){
+            addPoint("B");
+        }
+
+        if(key === "m"){
+            minusPoint("B");
+        }
+
+        if(key === "u"){
+            undo();
+        }
+
+        if(key === "f"){
+            toggleFullscreen();
+        }
+
     }
-    downloadBlob(csv,"hasil_stadion_kucur.csv","text/csv;charset=utf-8");
-}
+);
 
-function downloadResultHTML(){
-    const d=getResultData();
-    const winner=d.skorA===d.skorB?'SERI':(d.skorA>d.skorB?d.timA:d.timB);
-    const rows=d.hasilSet.length ? d.hasilSet.map((x,i)=>`
-      <tr><td>SET ${i+1}</td><td>${x.a}</td><td>${x.b}</td><td>${escapeHtml(x.winner||'-')}</td></tr>`).join('')
-      : `<tr><td>Set berjalan</td><td>${d.skorA}</td><td>${d.skorB}</td><td>-</td></tr>`;
-    const doc=`<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>Hasil ${escapeHtml(d.timA)} vs ${escapeHtml(d.timB)}</title>
-    <style>body{font-family:Arial;padding:35px;color:#111}h1,h2,p{text-align:center}table{width:100%;border-collapse:collapse;margin-top:25px}th,td{border:1px solid #999;padding:10px;text-align:center}th{background:#eee}.sign{display:grid;grid-template-columns:1fr 1fr;gap:80px;text-align:center;margin-top:80px}.space{height:70px}</style></head>
-    <body><h1>KARANG TARUNA BAKTI REMAJA</h1><h2>STADION KUCUR</h2><p><b>Jaten RW 005 • Miricinde • Purwantoro</b></p>
-    <h2>${escapeHtml(d.timA)} ${d.skorA} — ${d.skorB} ${escapeHtml(d.timB)}</h2>
-    <p><b>Hasil: ${escapeHtml(winner)}</b></p>
-    <table><tr><th>Set</th><th>${escapeHtml(d.timA)}</th><th>${escapeHtml(d.timB)}</th><th>Pemenang</th></tr>${rows}</table>
-    <p>Dicetak/dibuat: ${escapeHtml(d.waktu)}</p><div class="sign"><div>Wasit / Petugas<div class="space"></div>(________________)</div><div>Panitia<div class="space"></div>(________________)</div></div>
-    </body></html>`;
-    downloadBlob(doc,"hasil_stadion_kucur.html","text/html;charset=utf-8");
-}
 
-function downloadBlob(content,filename,type){
-    const blob=new Blob([content],{type:type});
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download=filename;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
-}
+/* =========================================================
+   AWAL
+========================================================= */
+
+updateDisplay();
 
 </script>
+
 </body>
 </html>
+```
